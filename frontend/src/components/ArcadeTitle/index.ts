@@ -1,0 +1,2 @@
+export { ArcadeTitle } from "./ArcadeTitle";
+

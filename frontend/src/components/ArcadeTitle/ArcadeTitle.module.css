@@ -1,0 +1,57 @@
+.title {
+  font-family: var(--font-arcade);
+  font-size: clamp(1.5rem, 5vw, 4rem);
+  color: var(--pacman-yellow);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: var(--spacing-md);
+
+  /* Glow effect */
+  text-shadow:
+    0 0 10px var(--pacman-yellow),
+    0 0 20px var(--pacman-yellow),
+    0 0 30px var(--pacman-yellow-glow),
+    0 0 40px var(--pacman-yellow-glow);
+
+  /* Animation */
+  animation: glow-pulse var(--animation-duration) var(--animation-timing)
+    infinite;
+}
+
+/* Hover enhancement */
+.title:hover {
+  text-shadow:
+    0 0 15px var(--pacman-yellow),
+    0 0 30px var(--pacman-yellow),
+    0 0 45px var(--pacman-yellow-glow),
+    0 0 60px var(--pacman-yellow-glow);
+}
+
+/* Responsive styles: 320px - 3840px */
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.25rem;
+    letter-spacing: 0.05em;
+    padding: var(--spacing-sm);
+  }
+}
+
+@media (min-width: 1920px) {
+  .title {
+    font-size: 5rem;
+  }
+}
+
+@media (min-width: 2560px) {
+  .title {
+    font-size: 6rem;
+  }
+}
+
+@media (min-width: 3840px) {
+  .title {
+    font-size: 8rem;
+  }
+}
+
