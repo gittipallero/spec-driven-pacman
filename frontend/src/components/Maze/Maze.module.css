@@ -1,0 +1,9 @@
+.maze {
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  border: 4px solid #2121de;
+  border-radius: 4px;
+  box-shadow: 0 0 20px rgba(33, 33, 222, 0.5);
+}
+

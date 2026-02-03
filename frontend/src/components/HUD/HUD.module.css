@@ -1,0 +1,84 @@
+.hud {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.9) 0%,
+    rgba(0, 0, 30, 0.8) 100%
+  );
+  border-bottom: 2px solid #2121de;
+  font-family: 'Press Start 2P', monospace;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.label {
+  font-size: 0.5rem;
+  color: #888;
+  letter-spacing: 0.1em;
+}
+
+.value {
+  font-size: 0.875rem;
+  color: #fff;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+.lives {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.lifeIcon {
+  color: #ffff00;
+  font-size: 0.75rem;
+  text-shadow: 0 0 5px #ffff00;
+}
+
+/* Score animation on change */
+.value[data-changed="true"] {
+  animation: scoreChange 0.2s ease-out;
+}
+
+@keyframes scoreChange {
+  0% {
+    transform: scale(1);
+    color: #fff;
+  }
+  50% {
+    transform: scale(1.2);
+    color: #ffff00;
+  }
+  100% {
+    transform: scale(1);
+    color: #fff;
+  }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .hud {
+    padding: 0.5rem;
+  }
+
+  .label {
+    font-size: 0.4rem;
+  }
+
+  .value {
+    font-size: 0.625rem;
+  }
+
+  .lifeIcon {
+    font-size: 0.5rem;
+  }
+}
+
