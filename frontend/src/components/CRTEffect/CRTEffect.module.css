@@ -1,0 +1,70 @@
+.crtContainer {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--arcade-dark-blue);
+  overflow: hidden;
+
+  /* CRT screen curvature effect */
+  border-radius: 20px / 10px;
+
+  /* Inner shadow for depth */
+  box-shadow:
+    inset 0 0 100px rgba(0, 0, 0, 0.5),
+    inset 0 0 50px rgba(0, 0, 0, 0.3);
+
+  /* Subtle vignette */
+  background-image: radial-gradient(
+    ellipse at center,
+    transparent 0%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+}
+
+.scanLines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 10;
+
+  /* Scan lines pattern */
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+
+  /* Subtle CRT flicker animation */
+  animation: crt-flicker 8s linear infinite;
+}
+
+.content {
+  position: relative;
+  z-index: 5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Phosphor glow effect on the container */
+.crtContainer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(33, 33, 222, 0.1) 0%,
+    transparent 70%
+  );
+}
+

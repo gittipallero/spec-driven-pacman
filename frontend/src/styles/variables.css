@@ -1,0 +1,38 @@
+:root {
+  /* Backgrounds */
+  --arcade-black: #000000;
+  --arcade-dark-blue: #0a0a23;
+
+  /* Pac-Man Yellow (primary) */
+  --pacman-yellow: #ffff00;
+  --pacman-yellow-glow: #ffff66;
+
+  /* Ghost Colors (accents) */
+  --ghost-red: #ff0000;
+  --ghost-pink: #ffb8ff;
+  --ghost-cyan: #00ffff;
+  --ghost-orange: #ffb852;
+
+  /* Maze Blue */
+  --maze-blue: #2121de;
+  --maze-blue-light: #3333ff;
+
+  /* UI Elements */
+  --text-white: #ffffff;
+  --text-dim: #888888;
+
+  /* Typography */
+  --font-arcade: "Press Start 2P", "Courier New", monospace;
+
+  /* Spacing */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 2rem;
+  --spacing-lg: 4rem;
+  --spacing-xl: 8rem;
+
+  /* Animation */
+  --animation-duration: 2s;
+  --animation-timing: ease-in-out;
+}
+
