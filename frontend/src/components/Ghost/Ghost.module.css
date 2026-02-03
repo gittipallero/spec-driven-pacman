@@ -1,0 +1,135 @@
+.ghost {
+  position: absolute;
+  z-index: 9;
+  transition: left 50ms linear, top 50ms linear;
+}
+
+.body {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.head {
+  width: 100%;
+  height: 70%;
+  background: var(--ghost-color);
+  border-radius: 50% 50% 0 0;
+  position: absolute;
+  top: 0;
+}
+
+.eyes {
+  display: flex;
+  justify-content: center;
+  gap: 15%;
+  padding-top: 25%;
+}
+
+.eye {
+  width: 30%;
+  height: 45%;
+  background: white;
+  border-radius: 50%;
+  position: relative;
+}
+
+.pupil {
+  width: 50%;
+  height: 60%;
+  background: #0000ff;
+  border-radius: 50%;
+  position: absolute;
+  top: 20%;
+  left: 25%;
+  transition: left 0.1s, top 0.1s;
+}
+
+.pupil[data-direction="left"] {
+  left: 5%;
+}
+
+.pupil[data-direction="right"] {
+  left: 45%;
+}
+
+.pupil[data-direction="up"] {
+  top: 5%;
+}
+
+.pupil[data-direction="down"] {
+  top: 35%;
+}
+
+.skirt {
+  width: 100%;
+  height: 40%;
+  background: var(--ghost-color);
+  position: absolute;
+  bottom: 0;
+  display: flex;
+}
+
+.wave {
+  flex: 1;
+  height: 100%;
+  background: var(--ghost-color);
+  border-radius: 0 0 50% 50%;
+}
+
+/* Vulnerable state */
+.vulnerable .head,
+.vulnerable .skirt,
+.vulnerable .wave {
+  background: #2121de;
+  animation: flash 0.3s steps(2) infinite;
+}
+
+.vulnerable .pupil {
+  background: white;
+}
+
+@keyframes flash {
+  50% {
+    background: white;
+  }
+}
+
+/* Eaten state - only eyes visible */
+.eaten .body,
+.eaten .head,
+.eaten .skirt {
+  background: transparent;
+}
+
+.eyesOnly {
+  display: flex;
+  justify-content: center;
+  gap: 15%;
+  padding-top: 25%;
+  width: 100%;
+  height: 100%;
+}
+
+.eyesOnly .eye {
+  width: 30%;
+  height: 45%;
+  background: white;
+  border-radius: 50%;
+  position: relative;
+}
+
+.eyesOnly .pupil {
+  width: 50%;
+  height: 60%;
+  background: #0000ff;
+  border-radius: 50%;
+  position: absolute;
+  top: 20%;
+  left: 25%;
+}
+
+/* Respawning - subtle opacity */
+.respawning {
+  opacity: 0.7;
+}

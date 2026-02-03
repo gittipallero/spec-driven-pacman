@@ -1,0 +1,257 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Pac-Man WebSocket Messages",
+  "description": "JSON Schema definitions for WebSocket message types in Pac-Man game",
+  
+  "definitions": {
+    "Direction": {
+      "type": "string",
+      "enum": ["up", "down", "left", "right"]
+    },
+    
+    "GameStatus": {
+      "type": "string",
+      "enum": ["waiting", "playing", "paused", "gameOver", "levelComplete"]
+    },
+    
+    "PacManState": {
+      "type": "string",
+      "enum": ["idle", "moving", "dying"]
+    },
+    
+    "GhostName": {
+      "type": "string",
+      "enum": ["blinky", "pinky", "inky", "clyde"]
+    },
+    
+    "GhostState": {
+      "type": "string",
+      "enum": ["normal", "vulnerable", "eaten", "respawning"]
+    },
+    
+    "GhostMode": {
+      "type": "string",
+      "enum": ["chase", "scatter", "frightened"]
+    },
+    
+    "Position": {
+      "type": "object",
+      "required": ["x", "y"],
+      "properties": {
+        "x": { "type": "integer", "minimum": 0, "maximum": 27 },
+        "y": { "type": "integer", "minimum": 0, "maximum": 30 }
+      }
+    },
+    
+    "PacMan": {
+      "type": "object",
+      "required": ["x", "y", "direction", "state"],
+      "properties": {
+        "x": { "type": "integer", "minimum": 0, "maximum": 27 },
+        "y": { "type": "integer", "minimum": 0, "maximum": 30 },
+        "direction": { "$ref": "#/definitions/Direction" },
+        "state": { "$ref": "#/definitions/PacManState" }
+      }
+    },
+    
+    "Ghost": {
+      "type": "object",
+      "required": ["name", "x", "y", "direction", "state", "mode"],
+      "properties": {
+        "name": { "$ref": "#/definitions/GhostName" },
+        "x": { "type": "integer", "minimum": 0, "maximum": 27 },
+        "y": { "type": "integer", "minimum": 0, "maximum": 30 },
+        "direction": { "$ref": "#/definitions/Direction" },
+        "state": { "$ref": "#/definitions/GhostState" },
+        "mode": { "$ref": "#/definitions/GhostMode" }
+      }
+    },
+    
+    "ClientMessage": {
+      "oneOf": [
+        { "$ref": "#/definitions/InputMessage" },
+        { "$ref": "#/definitions/PauseMessage" },
+        { "$ref": "#/definitions/ResumeMessage" }
+      ]
+    },
+    
+    "InputMessage": {
+      "type": "object",
+      "required": ["type", "direction"],
+      "properties": {
+        "type": { "const": "input" },
+        "direction": { "$ref": "#/definitions/Direction" },
+        "timestamp": { 
+          "type": "integer",
+          "description": "Client timestamp for latency calculation (optional)"
+        }
+      },
+      "additionalProperties": false
+    },
+    
+    "PauseMessage": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "pause" }
+      },
+      "additionalProperties": false
+    },
+    
+    "ResumeMessage": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "resume" }
+      },
+      "additionalProperties": false
+    },
+    
+    "ServerMessage": {
+      "oneOf": [
+        { "$ref": "#/definitions/StateMessage" },
+        { "$ref": "#/definitions/EventMessage" },
+        { "$ref": "#/definitions/ErrorMessage" }
+      ]
+    },
+    
+    "StateMessage": {
+      "type": "object",
+      "required": ["type", "tick", "status", "score", "lives", "level", "pacman", "ghosts", "dotsRemaining", "vulnerabilityTimer"],
+      "properties": {
+        "type": { "const": "state" },
+        "tick": {
+          "type": "integer",
+          "description": "Server tick number for ordering/interpolation"
+        },
+        "status": { "$ref": "#/definitions/GameStatus" },
+        "score": { "type": "integer", "minimum": 0 },
+        "lives": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "level": { "type": "integer", "minimum": 1 },
+        "pacman": { "$ref": "#/definitions/PacMan" },
+        "ghosts": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Ghost" },
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "dotsRemaining": { "type": "integer", "minimum": 0 },
+        "vulnerabilityTimer": { 
+          "type": "integer", 
+          "minimum": 0,
+          "description": "Remaining vulnerability time in milliseconds"
+        },
+        "collectedDots": {
+          "type": "array",
+          "description": "Dots collected this tick (for animation)",
+          "items": { "$ref": "#/definitions/Position" }
+        }
+      },
+      "additionalProperties": false
+    },
+    
+    "EventMessage": {
+      "type": "object",
+      "required": ["type", "event"],
+      "properties": {
+        "type": { "const": "event" },
+        "event": {
+          "type": "string",
+          "enum": [
+            "dotCollected",
+            "powerPelletCollected",
+            "ghostEaten",
+            "pacmanDeath",
+            "levelComplete",
+            "gameOver",
+            "extraLife"
+          ]
+        },
+        "data": {
+          "type": "object",
+          "description": "Event-specific data",
+          "properties": {
+            "points": { "type": "integer" },
+            "ghostName": { "$ref": "#/definitions/GhostName" },
+            "position": { "$ref": "#/definitions/Position" },
+            "finalScore": { "type": "integer" }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    
+    "ErrorMessage": {
+      "type": "object",
+      "required": ["type", "code", "message"],
+      "properties": {
+        "type": { "const": "error" },
+        "code": {
+          "type": "string",
+          "enum": [
+            "INVALID_MESSAGE",
+            "INVALID_DIRECTION",
+            "GAME_NOT_ACTIVE",
+            "RATE_LIMITED",
+            "INTERNAL_ERROR"
+          ]
+        },
+        "message": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  },
+  
+  "examples": {
+    "clientInput": {
+      "type": "input",
+      "direction": "up",
+      "timestamp": 1706918400000
+    },
+    
+    "clientPause": {
+      "type": "pause"
+    },
+    
+    "serverState": {
+      "type": "state",
+      "tick": 1234,
+      "status": "playing",
+      "score": 1250,
+      "lives": 3,
+      "level": 1,
+      "pacman": {
+        "x": 14,
+        "y": 20,
+        "direction": "left",
+        "state": "moving"
+      },
+      "ghosts": [
+        { "name": "blinky", "x": 13, "y": 11, "direction": "down", "state": "normal", "mode": "chase" },
+        { "name": "pinky", "x": 13, "y": 14, "direction": "up", "state": "normal", "mode": "scatter" },
+        { "name": "inky", "x": 11, "y": 14, "direction": "left", "state": "vulnerable", "mode": "frightened" },
+        { "name": "clyde", "x": 15, "y": 14, "direction": "right", "state": "normal", "mode": "scatter" }
+      ],
+      "dotsRemaining": 180,
+      "vulnerabilityTimer": 4500,
+      "collectedDots": [{ "x": 14, "y": 21 }]
+    },
+    
+    "serverEvent": {
+      "type": "event",
+      "event": "ghostEaten",
+      "data": {
+        "ghostName": "inky",
+        "points": 400,
+        "position": { "x": 11, "y": 14 }
+      }
+    },
+    
+    "serverError": {
+      "type": "error",
+      "code": "INVALID_DIRECTION",
+      "message": "Direction must be one of: up, down, left, right"
+    }
+  }
+}
+

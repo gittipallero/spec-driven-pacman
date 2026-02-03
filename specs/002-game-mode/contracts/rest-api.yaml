@@ -1,0 +1,346 @@
+openapi: 3.0.3
+info:
+  title: Pac-Man Game API
+  description: REST API for Pac-Man game initialization and control
+  version: 1.0.0
+
+servers:
+  - url: /api
+    description: API base path
+
+paths:
+  /game/start:
+    post:
+      summary: Start new game session
+      description: Initialize a new Pac-Man game session and return initial state with maze
+      operationId: startGame
+      responses:
+        '201':
+          description: Game session created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameStartResponse'
+        '503':
+          description: Server at capacity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /game/{sessionId}:
+    get:
+      summary: Get game state
+      description: Retrieve current state of a game session
+      operationId: getGameState
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+      responses:
+        '200':
+          description: Current game state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameState'
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      summary: End game session
+      description: Terminate and clean up a game session
+      operationId: endGame
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+      responses:
+        '204':
+          description: Session ended
+        '404':
+          description: Session not found
+
+  /game/{sessionId}/pause:
+    post:
+      summary: Pause game
+      description: Pause an active game session
+      operationId: pauseGame
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+      responses:
+        '200':
+          description: Game paused
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameState'
+        '400':
+          description: Game cannot be paused (not playing)
+        '404':
+          description: Session not found
+
+  /game/{sessionId}/resume:
+    post:
+      summary: Resume game
+      description: Resume a paused game session
+      operationId: resumeGame
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+      responses:
+        '200':
+          description: Game resumed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameState'
+        '400':
+          description: Game cannot be resumed (not paused)
+        '404':
+          description: Session not found
+
+components:
+  parameters:
+    SessionId:
+      name: sessionId
+      in: path
+      required: true
+      description: Unique game session identifier
+      schema:
+        type: string
+        format: uuid
+        example: "550e8400-e29b-41d4-a716-446655440000"
+
+  schemas:
+    GameStartResponse:
+      type: object
+      required:
+        - sessionId
+        - websocketUrl
+        - state
+        - maze
+      properties:
+        sessionId:
+          type: string
+          format: uuid
+          description: Unique session identifier
+        websocketUrl:
+          type: string
+          description: WebSocket URL for real-time updates
+          example: "/ws/game/550e8400-e29b-41d4-a716-446655440000"
+        state:
+          $ref: '#/components/schemas/GameState'
+        maze:
+          $ref: '#/components/schemas/Maze'
+
+    GameState:
+      type: object
+      required:
+        - status
+        - score
+        - lives
+        - level
+        - pacman
+        - ghosts
+        - dotsRemaining
+        - vulnerabilityTimer
+      properties:
+        status:
+          $ref: '#/components/schemas/GameStatus'
+        score:
+          type: integer
+          minimum: 0
+          example: 1250
+        lives:
+          type: integer
+          minimum: 0
+          maximum: 3
+          example: 3
+        level:
+          type: integer
+          minimum: 1
+          example: 1
+        pacman:
+          $ref: '#/components/schemas/PacMan'
+        ghosts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ghost'
+          minItems: 4
+          maxItems: 4
+        dots:
+          type: array
+          description: List of dot states (optional, can use dotsRemaining count)
+          items:
+            $ref: '#/components/schemas/Dot'
+        dotsRemaining:
+          type: integer
+          minimum: 0
+          example: 240
+        vulnerabilityTimer:
+          type: integer
+          description: Remaining ghost vulnerability time in milliseconds
+          minimum: 0
+          example: 0
+
+    GameStatus:
+      type: string
+      enum:
+        - waiting
+        - playing
+        - paused
+        - gameOver
+        - levelComplete
+      example: playing
+
+    PacMan:
+      type: object
+      required:
+        - x
+        - y
+        - direction
+        - state
+      properties:
+        x:
+          type: integer
+          minimum: 0
+          maximum: 27
+          example: 13
+        y:
+          type: integer
+          minimum: 0
+          maximum: 30
+          example: 23
+        direction:
+          $ref: '#/components/schemas/Direction'
+        state:
+          type: string
+          enum:
+            - idle
+            - moving
+            - dying
+          example: moving
+
+    Ghost:
+      type: object
+      required:
+        - name
+        - x
+        - y
+        - direction
+        - state
+        - mode
+      properties:
+        name:
+          type: string
+          enum:
+            - blinky
+            - pinky
+            - inky
+            - clyde
+          example: blinky
+        x:
+          type: integer
+          minimum: 0
+          maximum: 27
+          example: 13
+        y:
+          type: integer
+          minimum: 0
+          maximum: 30
+          example: 11
+        direction:
+          $ref: '#/components/schemas/Direction'
+        state:
+          type: string
+          enum:
+            - normal
+            - vulnerable
+            - eaten
+            - respawning
+          example: normal
+        mode:
+          type: string
+          enum:
+            - chase
+            - scatter
+            - frightened
+          example: chase
+
+    Direction:
+      type: string
+      enum:
+        - up
+        - down
+        - left
+        - right
+        - none
+      example: left
+
+    Maze:
+      type: object
+      required:
+        - width
+        - height
+        - tiles
+      properties:
+        width:
+          type: integer
+          example: 28
+        height:
+          type: integer
+          example: 31
+        tiles:
+          type: array
+          description: 2D array of tile types (row-major order)
+          items:
+            type: array
+            items:
+              type: integer
+              minimum: 0
+              maximum: 5
+              description: |
+                0 = Empty (walkable)
+                1 = Wall
+                2 = Dot
+                3 = Power Pellet
+                4 = Ghost House
+                5 = Tunnel
+
+    Dot:
+      type: object
+      required:
+        - x
+        - y
+        - type
+        - collected
+      properties:
+        x:
+          type: integer
+          minimum: 0
+          maximum: 27
+        y:
+          type: integer
+          minimum: 0
+          maximum: 30
+        type:
+          type: string
+          enum:
+            - dot
+            - powerPellet
+        collected:
+          type: boolean
+
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          example: SESSION_NOT_FOUND
+        message:
+          type: string
+          example: Game session does not exist
+

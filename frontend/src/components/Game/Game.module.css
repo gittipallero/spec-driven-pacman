@@ -1,0 +1,153 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #000 0%, #0a0a1a 100%);
+  padding: 1rem;
+}
+
+.gameArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.mazeContainer {
+  position: relative;
+  display: inline-block;
+}
+
+/* Loading state */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.loadingText {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1.5rem;
+  color: #ffff00;
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Error state */
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+.errorTitle {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 2rem;
+  color: #ff0000;
+  margin: 0;
+}
+
+.errorMessage {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.75rem;
+  color: #fff;
+  margin: 0;
+  max-width: 400px;
+}
+
+.retryButton,
+.exitButton {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.retryButton {
+  background: #ffff00;
+  color: #000;
+}
+
+.retryButton:hover {
+  background: #ffcc00;
+  transform: scale(1.05);
+}
+
+.exitButton {
+  background: transparent;
+  color: #888;
+  border: 2px solid #888;
+}
+
+.exitButton:hover {
+  color: #fff;
+  border-color: #fff;
+}
+
+/* Connection status */
+.connectionStatus {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.75rem;
+  color: #ff6600;
+  padding: 1rem 2rem;
+  background: rgba(0, 0, 0, 0.9);
+  border: 2px solid #ff6600;
+  border-radius: 8px;
+  z-index: 50;
+  animation: connectionPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes connectionPulse {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 10px rgba(255, 102, 0, 0.5);
+  }
+  50% {
+    opacity: 0.7;
+    box-shadow: 0 0 20px rgba(255, 102, 0, 0.8);
+  }
+}
+
+.connectionLost {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.875rem;
+  color: #ff0000;
+  padding: 1.5rem 2.5rem;
+  background: rgba(0, 0, 0, 0.95);
+  border: 2px solid #ff0000;
+  border-radius: 8px;
+  z-index: 50;
+  text-align: center;
+}
+
+.connectionLostTitle {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+}
+
+.connectionLostMessage {
+  margin: 0;
+  font-size: 0.625rem;
+  color: #888;
+}
+
